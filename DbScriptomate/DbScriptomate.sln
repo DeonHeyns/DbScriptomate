@@ -3,16 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30110.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NextSequenceNumber.Contracts", "NextSequenceNumber.Contracts\NextSequenceNumber.Contracts.csproj", "{AE3EE7DD-2DF4-485F-94F0-57DC60288B89}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NextSequenceNumber.Service", "NextSequenceNumber.Service\NextSequenceNumber.Service.csproj", "{C5E74EBD-732C-47EF-AC53-791053F3CB99}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{73B21E97-FDDB-4DCE-8C99-E352F7AE6CE2}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\NuGet.Config = .nuget\NuGet.Config
 		.nuget\NuGet.exe = .nuget\NuGet.exe
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NextSequenceNumber.Contracts", "NextSequenceNumber.Contracts\NextSequenceNumber.Contracts.csproj", "{AE3EE7DD-2DF4-485F-94F0-57DC60288B89}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NextSequenceNumber.Service", "NextSequenceNumber.Service\NextSequenceNumber.Service.csproj", "{C5E74EBD-732C-47EF-AC53-791053F3CB99}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbScriptomate", "DbScriptomate\DbScriptomate.csproj", "{F922B997-59F4-44AE-9645-3ED3C19C5B2D}"
 EndProject
