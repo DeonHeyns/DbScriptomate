@@ -1,0 +1,1 @@
+These scripts will create the objects in your database that are required by DbSCriptomate for tracking which of your own scripts has and hasn't yet been applied to your db.

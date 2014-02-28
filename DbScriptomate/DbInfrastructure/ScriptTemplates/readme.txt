@@ -1,0 +1,2 @@
+These are the templates DbSCriptomate will use to generate new empty scripts for you to populate.
+The templates already take care of transactions and logging the fact that a script has been applied to the DB into the dbo.DbScripts table. They also check to see if a script has already been applied and will not apply it again if it is already there.
