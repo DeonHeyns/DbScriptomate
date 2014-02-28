@@ -6,10 +6,10 @@ Automated SQL Server database change deployments and versioning.
 What does it do?
 ----------------
 In short, it lets you:
-# Manage DB alterations an a controlled and repeatable way.
-# Version databases with your source code.
-# Propagate these DB versions to development team members running local databases.
-# Automate testing, staging and production deployments with your Continuous Integration or Deployment server.
+* Manage DB alterations an a controlled and repeatable way.
+* Version databases with your source code.
+* Propagate these DB versions to development team members running local databases.
+* Automate testing, staging and production deployments with your Continuous Integration or Deployment server.
 
 Why does it exist?
 ------------------
