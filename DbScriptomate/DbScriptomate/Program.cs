@@ -90,7 +90,7 @@ namespace DbScriptomate
 
             var scriptTemplatesDirectory =  Path.Combine(_appDir.FullName, @"_DbInfrastructure\ScriptTemplates");
             var scriptsTemplates = Directory.GetFiles(scriptTemplatesDirectory, "*.sql");
-            var templateDirectoryName = conSettings.Name.Replace('\\', '|');
+            var templateDirectoryName = conSettings.Name.Replace('\\', '-');
             var templateDirectory = Path.Combine(_appDir.FullName, templateDirectoryName);
             
             Directory.CreateDirectory(templateDirectory);
@@ -164,9 +164,13 @@ namespace DbScriptomate
 			string connectionPrefix)
 		{
 			Console.WriteLine("Pick connection string to use for:" + connectionPrefix);
+            // If a connection string contains \ we replace it with -
+            // We will use "Like" here so we remove the - delimiter and replace with % that the Regex will use
+            // to decide whether there is a match
+		    connectionPrefix = connectionPrefix.Replace('-', '%') + "%";
 			var connectionList = ConfigurationManager.ConnectionStrings.Cast<ConnectionStringSettings>()
 				.Where(cs => cs.Name != "LocalSqlServer")
-				.Where(cs => cs.Name.StartsWith(connectionPrefix))
+                .Where(cs => cs.Name.Like(connectionPrefix))
 				.ToList();
 			foreach (ConnectionStringSettings cs in connectionList)
 			{
