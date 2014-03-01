@@ -51,7 +51,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="HiDtos.cs" />
     <Compile Include="GetNextNumberResponse.cs" />
     <Compile Include="GetNextNumber.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
