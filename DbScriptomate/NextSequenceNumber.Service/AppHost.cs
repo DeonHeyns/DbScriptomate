@@ -9,10 +9,7 @@ namespace NextSequenceNumber.Service
 
 		public override void Configure(Funq.Container container)
 		{
-			Routes
-				.Add<Hi>("/Hi")
-				.Add<Hi>("/Hi/{Name}")
-				.Add<GetNextNumber>("/GetNextSequenceNumber/");
+			Routes.Add<GetNextNumber>("/GetNextSequenceNumber/");
 		}
 	}
 }

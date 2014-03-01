@@ -5,11 +5,6 @@ namespace NextSequenceNumber.Service
 {
 	public class NextSequenceNumberService : ServiceStack.ServiceInterface.Service
 	{
-		public object Any(Hi request)
-		{
-			return new HiResponse { Result = "Hi, " + request.Name };
-		}
-
 		public object Any(GetNextNumber request)
 		{
 			if (request.ForKey == null)
