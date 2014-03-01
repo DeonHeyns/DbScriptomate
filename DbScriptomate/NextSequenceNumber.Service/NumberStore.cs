@@ -1,7 +1,7 @@
-﻿
-using System;
+﻿using System;
 using System.IO;
 using System.Reflection;
+
 namespace NextSequenceNumber.Service
 {
 	internal static class NumberStore
@@ -28,7 +28,7 @@ namespace NextSequenceNumber.Service
 			string fileContent = File.ReadAllText(file);
 			int number;
 			if (!int.TryParse(fileContent, out number))
-				return "faled to parse: " + fileContent;
+				return "failed to parse: " + fileContent;
 
 			number++;
 			string nextNumber = number.ToString("00000");

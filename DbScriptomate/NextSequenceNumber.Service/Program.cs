@@ -1,6 +1,4 @@
-﻿using System;
-using ServiceStack.Configuration;
-using Topshelf;
+﻿using Topshelf;
 
 namespace NextSequenceNumber.Service
 {
