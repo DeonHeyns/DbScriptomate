@@ -1,7 +1,7 @@
-﻿using System.Xml;
-using Microsoft.SqlServer.Management.Common;
+﻿using Microsoft.SqlServer.Management.Common;
 using Microsoft.SqlServer.Management.Smo;
 using NextSequenceNumber.Contracts;
+using ServiceStack.Common.Extensions;
 using ServiceStack.ServiceClient.Web;
 using System;
 using System.Collections.Generic;
@@ -75,7 +75,7 @@ namespace DbScriptomate
 	    {
 	        ConnectionStringSettings conSettings = LetUserPickDbConnection("");
 
-	        var dbInfrastructure = new DirectoryInfo(Path.Combine(_appDir.FullName, "DbInfrastructure"));
+	        var dbInfrastructure = new DirectoryInfo(Path.Combine(_appDir.FullName, @"_DbInfrastructure\DbObjects"));
             var scripts = dbInfrastructure.GetFiles("*.sql", SearchOption.AllDirectories).AsEnumerable()
                 .OrderBy(f => f.Name)
                 .ToList();
@@ -86,6 +86,19 @@ namespace DbScriptomate
                 RunDbScript(conSettings, s, out result);
                 result = string.IsNullOrWhiteSpace(result) ? "Success" : result;
                 Console.WriteLine("Ran {0} with result: {1}", s.Name, result);
+            });
+
+            var scriptTemplatesDirectory =  Path.Combine(_appDir.FullName, @"_DbInfrastructure\ScriptTemplates");
+            var scriptsTemplates = Directory.GetFiles(scriptTemplatesDirectory, "*.sql");
+            var templateDirectoryName = conSettings.Name.Replace('\\', '|');
+            var templateDirectory = Path.Combine(_appDir.FullName, templateDirectoryName);
+            
+            Directory.CreateDirectory(templateDirectory);
+            
+            scriptsTemplates.ForEach(s =>
+            {
+                var filename = Path.Combine(templateDirectory, Path.GetFileName(s));
+                File.Copy(s, filename, overwrite:true);
             });
 	    }
 
