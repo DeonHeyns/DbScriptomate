@@ -1,4 +1,5 @@
-﻿using Microsoft.SqlServer.Management.Common;
+﻿using System.Xml;
+using Microsoft.SqlServer.Management.Common;
 using Microsoft.SqlServer.Management.Smo;
 using NextSequenceNumber.Contracts;
 using ServiceStack.ServiceClient.Web;
@@ -56,6 +57,11 @@ namespace DbScriptomate
 						ApplyScriptsToDb(runArgs, dbDir);
 						break;
 					}
+                case RunMode.SetupDb:
+			    {
+			        InitialSetup();
+			        break;
+			    }
 			}
 
 			if (runArgs.RunMode == RunMode.Interactive)
@@ -65,7 +71,25 @@ namespace DbScriptomate
 			}
 		}
 
-		private static List<FileInfo> GetExistingScriptFiles(DirectoryInfo dbDir)
+	    private static void InitialSetup()
+	    {
+	        ConnectionStringSettings conSettings = LetUserPickDbConnection("");
+
+	        var dbInfrastructure = new DirectoryInfo(Path.Combine(_appDir.FullName, "DbInfrastructure"));
+            var scripts = dbInfrastructure.GetFiles("*.sql", SearchOption.AllDirectories).AsEnumerable()
+                .OrderBy(f => f.Name)
+                .ToList();
+
+            scripts.ForEach(s =>
+            {
+                string result;
+                RunDbScript(conSettings, s, out result);
+                result = string.IsNullOrWhiteSpace(result) ? "Success" : result;
+                Console.WriteLine("Ran {0} with result: {1}", s.Name, result);
+            });
+	    }
+
+	    private static List<FileInfo> GetExistingScriptFiles(DirectoryInfo dbDir)
 		{
 			var scripts = dbDir.GetFiles("*.sql", SearchOption.AllDirectories).AsEnumerable()
 				.Where(f => !f.Directory.Name.StartsWith("_"))
@@ -140,7 +164,7 @@ namespace DbScriptomate
 			var input = Console.ReadKey();
 			Console.Clear();
 			int selectedIndex = int.Parse(input.KeyChar.ToString()) - 1;
-			Console.WriteLine(string.Format("{1} selected: {0}", connectionList[selectedIndex].Name, selectedIndex + 1));
+			Console.WriteLine("{1} selected: {0}", connectionList[selectedIndex].Name, selectedIndex + 1);
 			var con = connectionList[selectedIndex];
 			return con;
 		}
@@ -152,7 +176,7 @@ namespace DbScriptomate
 		{
 			var scriptsToRun = new List<FileInfo>();
 			var dbScriptNumbers = GetDbScripts(conSettings);
-			Console.WriteLine(string.Format("{0} scripts logged in dbo.DbScripts", dbScriptNumbers.Count()));
+			Console.WriteLine("{0} scripts logged in dbo.DbScripts", dbScriptNumbers.Count());
 			Console.WriteLine("The following are scripts not yet run on the selected DB:");
 			foreach (var scriptFile in scripts)
 			{
@@ -182,13 +206,13 @@ namespace DbScriptomate
 			{
 				foreach (var scriptFile in scriptsToRun)
 				{
-					Console.WriteLine(string.Format("Running {0}", scriptFile.Name));
+					Console.WriteLine("Running {0}", scriptFile.Name);
 					string errorMessage = string.Empty;
 					bool success = RunDbScript(conSettings, scriptFile, out errorMessage);
 					Console.WriteLine(success ? "Succeeded" : "Failed:");
 					if (!success)
 					{
-						Console.WriteLine(string.Format("{0}", errorMessage));
+						Console.WriteLine("{0}", errorMessage);
 						if (runArgs.RunMode == RunMode.Interactive)
 						{
 							Console.WriteLine("1 - Skip, 2 - Abort?");
@@ -196,16 +220,12 @@ namespace DbScriptomate
 							int selectedIndex = int.Parse(innerInput.KeyChar.ToString());
 							if (selectedIndex == 2)
 								return;
-							else
-								continue;
 						}
-						else // not interactive 
-							Environment.Exit(2222);
+                        // Not interactive
+					    Environment.Exit(2222);
 					}
 				}
 			}
-			else // Don't apply anything
-				return;
 		}
 
 		private static void PrintScriptItemInfo(FileInfo scriptFile)
@@ -281,6 +301,7 @@ namespace DbScriptomate
 			Console.WriteLine("Pick:");
 			Console.WriteLine("1) Detect last script number and generate new script template");
 			Console.WriteLine("2) Detect missing scripts in DB");
+            Console.WriteLine("3) Setup your Database for DbScriptomate");
 			var input = Console.ReadKey();
 			Console.Clear();
 			switch (input.KeyChar)
@@ -291,6 +312,9 @@ namespace DbScriptomate
 				case '2':
 					ApplyScriptsToDb(runArgs, dbDir);
 					break;
+                case '3':
+                    InitialSetup();
+                    break;
 			}
 		}
 
@@ -323,8 +347,11 @@ namespace DbScriptomate
 			Console.WriteLine("DbScriptomate creates a new file with the following file name format: [ScriptNumber].[Author (Initials)].[ScriptType (DDL or DML)].[Short description].sql");
 			Console.WriteLine("usage:> DbScriptomate.exe [\"ScriptType\" \"Author\" \"Short description\"]");
 			Console.WriteLine(Environment.NewLine);
-			Console.WriteLine(string.Format("Apply scripts to specific database."));
-			Console.WriteLine(string.Format(@"usage: /ApplyScripts <DbKey> <""con string""> <""provider""> [""DbDir=<script directory>""]"));
+			Console.WriteLine("Apply scripts to specific database.");
+			Console.WriteLine(@"usage: /ApplyScripts <DbKey> <""con string""> <""provider""> [""DbDir=<script directory>""]");
+            Console.WriteLine(Environment.NewLine);
+		    Console.WriteLine("Setup your database with the required Function, Table and Stored Procedure to let DbScriptomate manage your migrations.");
+		    Console.WriteLine("usage: /SetupDb");
 		}
 
 		private static RunArguments ParseRunArguments(string[] args)
@@ -358,9 +385,9 @@ namespace DbScriptomate
 					runArgs.DbDir = Path.Combine(_appDir.FullName, runArgs.DbKey);
 				}
 
-				Console.WriteLine(string.Format("Applying Scripts to DB with Key: {0}", runArgs.DbKey));
-				Console.WriteLine(string.Format("Connection string: {0}", runArgs.DbConnectionString));
-				Console.WriteLine(string.Format("Provider: {0}", runArgs.DbConnectionProvider));
+				Console.WriteLine("Applying Scripts to DB with Key: {0}", runArgs.DbKey);
+				Console.WriteLine("Connection string: {0}", runArgs.DbConnectionString);
+				Console.WriteLine("Provider: {0}", runArgs.DbConnectionProvider);
 			}
 			else if (args.Length == 3)
 			{
@@ -369,6 +396,10 @@ namespace DbScriptomate
 				runArgs.Author = args[1];
 				runArgs.Description = args[2];
 			}
+            else if (args.Any(a => a.ToLower().Equals("setupdb")))
+            {
+                runArgs.RunMode = RunMode.SetupDb;                
+            }
 			return runArgs;
 		}
 

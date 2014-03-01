@@ -6,5 +6,6 @@ namespace DbScriptomate
 		Interactive,
 		GenerateNewScript,
 		ApplyScriptsToDb,
+        SetupDb,
 	}
 }
