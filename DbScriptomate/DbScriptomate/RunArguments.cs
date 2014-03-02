@@ -41,7 +41,12 @@ namespace DbScriptomate
 
 		private void ParseRunArguments(string[] args, DirectoryInfo appDir)
 		{
-			if (args.Length == 0)
+			if (args.Any(x => x.StartsWith("/?"))
+				|| args.Select(a => a.ToLower()).Any(x => x.Contains("/help")))
+			{
+				this.RunMode = RunMode.Help;
+			}
+			else if (args.Length == 0)
 			{
 				this.RunMode = RunMode.Interactive;
 			}

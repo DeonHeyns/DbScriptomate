@@ -6,5 +6,6 @@
 		GenerateNewScript,
 		ApplyScriptsToDb,
 		SetupDb,
+		Help
 	}
 }

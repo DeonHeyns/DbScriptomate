@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 
 namespace DbScriptomate
@@ -10,17 +9,18 @@ namespace DbScriptomate
 
 		static void Main(string[] args)
 		{
-			if (args.Any(x => x.Contains("/?")))
-			{
-				ShowHelp();
-				return;
-			}
-			else
-				Console.WriteLine("Run /? for command line help.");
+			Console.WriteLine("DbScriptomate");
 
 			var currentExePath = Assembly.GetExecutingAssembly().Location;
 			var appDir = new DirectoryInfo(Path.GetDirectoryName(currentExePath));
 			var runArgs = new RunArguments(args, appDir);
+			if (runArgs.RunMode == RunMode.Help)
+			{
+				ShowHelp();
+				return;
+			}
+			Console.WriteLine("Run /? for command line help.");
+
 			var app = new App(runArgs, appDir);
 			app.Execute();
 
