@@ -1,26 +1,34 @@
-﻿using System.Security.Principal;
+﻿using Microsoft.SqlServer.Management.Common;
+using System;
+using System.IO;
+using System.Linq;
+using System.Security.Principal;
 
 namespace DbScriptomate
 {
 	internal class RunArguments
 	{
-		public RunMode RunMode { get; set; }
+		internal RunMode RunMode { get; set; }
 
-		public string Author { get; set; }
-		public string Description { get; set; }
-		public string DdlOrDmlType { get; set; }
-		public string ScriptNumber { get; set; }
-		public string DbKey { get; set; }
-		public string DbConnectionString { get; set; }
-		public string DbConnectionProvider { get; set; }
-		public string DbDir { get; set; }
+		internal string Author { get; set; }
+		internal string Description { get; set; }
+		internal string DdlOrDmlType { get; set; }
+		internal string ScriptNumber { get; set; }
+		internal string DbKey { get; set; }
+		internal string DbConnectionString { get; set; }
+		internal string DbConnectionProvider { get; set; }
+		internal string DbDir { get; set; }
 
-		public RunArguments()
+		internal RunArguments(
+			string[] args,
+			DirectoryInfo appDir)
 		{
 			this.RunMode = RunMode.Interactive;
 			Description = GetCurrentUserName();
 			DdlOrDmlType = "XXX";
 			Author = "XX";
+
+			this.ParseRunArguments(args, appDir);
 		}
 
 		private static string GetCurrentUserName()
@@ -30,5 +38,53 @@ namespace DbScriptomate
 			var currentUser = identity.Name.Replace(@"\", "_");
 			return currentUser;
 		}
+
+		private void ParseRunArguments(string[] args, DirectoryInfo appDir)
+		{
+			if (args.Length == 0)
+			{
+				this.RunMode = RunMode.Interactive;
+			}
+			else if (args.Select(a => a.ToLower()).Any(x => x.Contains("/applyscripts")))
+			{
+				if (args.Count() < 4)
+				{
+					Console.WriteLine("/ApplyScripts requires at least 4 arguments. Runn /? for help.");
+					Environment.Exit(1);
+				}
+				this.RunMode = RunMode.ApplyScriptsToDb;
+				this.DbKey = args[1];
+				this.DbConnectionString = args[2];
+				this.DbConnectionProvider = args[3];
+
+				this.DbDir = args.SingleOrDefault(a => a.ToLower().StartsWith("dbdir="));
+				if (this.DbDir != null)
+				{
+					this.DbDir = this.DbDir.Replace("dbdir=", string.Empty);
+					if (!Directory.Exists(this.DbDir))
+						throw new InvalidArgumentException("The directory specified for the DbDir command line param does not exist: " + this.DbDir);
+				}
+				else
+				{
+					this.DbDir = Path.Combine(appDir.FullName, this.DbKey);
+				}
+
+				Console.WriteLine("Applying Scripts to DB with Key: {0}", this.DbKey);
+				Console.WriteLine("Connection string: {0}", this.DbConnectionString);
+				Console.WriteLine("Provider: {0}", this.DbConnectionProvider);
+			}
+			else if (args.Length == 3)
+			{
+				this.RunMode = RunMode.GenerateNewScript;
+				this.DdlOrDmlType = args[0];
+				this.Author = args[1];
+				this.Description = args[2];
+			}
+			else if (args.Any(a => a.ToLower().Equals("setupdb")))
+			{
+				this.RunMode = RunMode.SetupDb;
+			}
+		}
+
 	}
 }
