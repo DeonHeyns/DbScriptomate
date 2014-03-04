@@ -30,6 +30,7 @@ There is
 *DbScriptomate.NextSequenceNumber.Service.exe*
 This is the central "web" service that you can smack on to a server somewhere on your network. It's sole purpose in life is to dish out new sequence numbers in a concurrency safe way as devs require new DB scripts. So you can just ask it, give me the next number in the sequence for the key "YourVeryCoolDbName", and you will get it.
 DbScriptomate.NextSequenceNumber.Service.exe can run both as a console app or be installed as a Windows service. (It uses topshelf - http://topshelf-project.com/)
+We use a central service to hand out script numbers so they are unique across different source control branches. This, together with SQL DB Snapshots, allows you to version your database with your code in quite a simple way)
 
 Then there is
 *DbScriptomate.exe*
