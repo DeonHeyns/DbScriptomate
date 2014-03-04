@@ -38,6 +38,9 @@ This is what each developer will run when he or she wants to apply scripts from 
 And it is also what will be run by your CI server during an automated deployment.
 It has both an interactive and commandline mode.
 
+* We also have a table we create in your DB (dbo.DbScripts). This stores the information of each script that has been applied to that specific DB. Not the actual content of the script, but just the meta information. Script number, date applied, author initials, login used, etc.
+
+
 Why does it exist?
 ------------------
 We were running in an environment where we make extensive use of SQL Merge Replication. For those who have tried this, you will know that replication puts a number of additional constraints on what you can do to a database.
