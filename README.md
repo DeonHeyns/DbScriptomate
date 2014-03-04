@@ -13,6 +13,14 @@ In short, it lets you:
 * Propagate these DB versions to development team members running local databases.
 * Automate testing, staging and production deployments with your Continuous Integration or Deployment server.
 
+What will it ask of you?
+------------------------
+All changes to your database should happen through TSQL scripts. Either you have to generate them using SSMS or some other tool, or you should write them by hand. For the most part, we have found that writing them by hand works the best for alterations to existing DB objects, such as adding columns or changing constraints or indexes, etc.
+The only time we generate scripts is for new objects, as when we add one or more tables. In that case we usually design them in a diagram, and generate create scripts for them afterward.
+Either way, you need to end up with a script.
+You cannot mix DML and DDL in the same batch, so DbScriptomate expects only one of the 2 in a given script file.
+
+
 How does it work?
 -----------------
 There is
