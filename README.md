@@ -20,6 +20,7 @@ The only time we generate scripts is for new objects, as when we add one or more
 Either way, you need to end up with a script.
 You cannot mix DML and DDL in the same batch, so DbScriptomate expects only one of the 2 in a given script file.
 You will copy the content of your scripts into the script files that DbScriptomate generates for you off predefined templates.
+
 The templates are written in such a way that each script file is transactional, and has the same semantics whether it is executed manually through SSMS, or automatically by DbScriptomate. Either way, it will rollback if the script file could not be fully applied, and if successful, it will log the fact that the script was applied to the DB so that the same script will not ever be attempted again on the same DB. (That's cool, in case you didn't realise)
 
 
