@@ -26,14 +26,8 @@ The templates are written in such a way that each script file is transactional, 
 
 How does it work?
 -----------------
-* There is *DbScriptomate.NextSequenceNumber.Service.exe*
-This is the central "web" service that you can smack on to a server somewhere on your network. It's sole purpose in life is to dish out new sequence numbers in a concurrency safe way as devs require new DB scripts. So you can just ask it, give me the next number in the sequence for the key "YourVeryCoolDbName", and you will get it.
-DbScriptomate.NextSequenceNumber.Service.exe can run both as a console app or be installed as a Windows service. (It uses topshelf - http://topshelf-project.com/)
-We use a central service to hand out script numbers so they are unique across different source control branches. This, together with SQL DB Snapshots, allows you to version your database with your code in quite a simple way)
-
-* Then there is *DbScriptomate.exe*
-This has two functions. It is the client you use to ask the NextSequenceNumber service for, well, the next sequence number, and it will generate a script off a script template for you with that sequence number baked in.
-And it can also check a specified DB for scripts that have not yet been applied to it, and optionally apply missing ones.
+* There is *DbScriptomate.exe*
+This has two functions. It is the client you use to generate a script off a script template for you. The generated script file will have a timestamp prepended to ensure no clashes with other scripts and also ensures that scripts are run sequentially. And it can also check a specified DB for scripts that have not yet been applied to it, and optionally apply missing ones.
 This is what each developer will run when he or she wants to apply scripts from a source control branch to a specific database or databases.
 And it is also what will be run by your CI server during an automated deployment.
 It has both an interactive and commandline mode.

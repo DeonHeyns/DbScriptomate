@@ -2,12 +2,10 @@
 using System.Linq;
 using System.Configuration;
 using System.IO;
-using NextSequenceNumber.Contracts;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using Microsoft.SqlServer.Management.Common;
 using System.Data.SqlClient;
-using ServiceStack.ServiceClient.Web;
 using Microsoft.SqlServer.Management.Smo;
 using System.Text;
 
@@ -291,23 +289,11 @@ namespace DbScriptomate
 			}
 		}
 
-		private GetNextNumberResponse GetNextSequenceNumber(string key)
-		{
-			string url = (string)new AppSettingsReader().GetValue("NextSequenceNumberServiceUrl", typeof(string));
-			using (var client = new JsonServiceClient(url))
-			{
-				var response = client.Post<GetNextNumberResponse>(new GetNextNumber { ForKey = key });
-				return response;
-			}
-		}
-
 		private void GenerateNewScript(
 			RunArguments runArgs,
 			DirectoryInfo dbDir)
 		{
-			var response = GetNextSequenceNumber(dbDir.Name);
-			Console.WriteLine(response.ToString());
-			runArgs.ScriptNumber = response.NextSequenceNumber;
+		    runArgs.ScriptNumber = DateTime.UtcNow.ToString("yyMMddHHmmss");
 			var newScript = CreateNewScriptFile(dbDir, runArgs);
 
 			Console.WriteLine("using {0} next", runArgs.ScriptNumber);
