@@ -276,7 +276,8 @@ namespace DbScriptomate
 			Console.WriteLine("2) Detect missing scripts in DB");
 			Console.WriteLine("3) Setup your Database for DbScriptomate");
 			var input = Console.ReadKey();
-			Console.Clear();
+			
+            Console.Clear();
 			switch (input.KeyChar)
 			{
 				case '1':
@@ -291,8 +292,16 @@ namespace DbScriptomate
 			}
 		}
 
-		private GetNextNumberResponse GetNextSequenceNumber(string key)
+		private GetNextNumberResponse GetNextSequenceNumber(string key, bool useLocal=false)
 		{
+		    if (useLocal)
+		    {
+		        return new GetNextNumberResponse 
+                {
+		            ForKey = key,
+		            NextSequenceNumber = DateTime.UtcNow.ToString("yyMMddHHmmss")
+		        };
+		    }
 			string url = (string)new AppSettingsReader().GetValue("NextSequenceNumberServiceUrl", typeof(string));
 			using (var client = new JsonServiceClient(url))
 			{
@@ -305,7 +314,7 @@ namespace DbScriptomate
 			RunArguments runArgs,
 			DirectoryInfo dbDir)
 		{
-			var response = GetNextSequenceNumber(dbDir.Name);
+			var response = GetNextSequenceNumber(dbDir.Name, runArgs.UseLocal);
 			Console.WriteLine(response.ToString());
 			runArgs.ScriptNumber = response.NextSequenceNumber;
 			var newScript = CreateNewScriptFile(dbDir, runArgs);

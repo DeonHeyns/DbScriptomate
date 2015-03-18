@@ -33,8 +33,8 @@ namespace DbScriptomate
 
 		private static void ShowHelp()
 		{
-			Console.WriteLine("DbScriptomate creates a new file with the following file name format: [ScriptNumber].[Author (Initials)].[ScriptType (DDL or DML)].[Short description].sql");
-			Console.WriteLine("usage:> DbScriptomate.exe [\"ScriptType\" \"Author\" \"Short description\"]");
+			Console.WriteLine("DbScriptomate creates a new file with the following file name format: [ScriptNumber].[Author (Initials)].[ScriptType (DDL or DML)].[Short description].sql\r\nOptionally add the UseLocal flag to generate sequence numbers using the local sequence number provider.");
+			Console.WriteLine("usage:> DbScriptomate.exe [\"ScriptType\" \"Author\" \"Short description\" \"UseLocal\"]");
 			Console.WriteLine(Environment.NewLine);
 			Console.WriteLine("Apply scripts to specific database.");
 			Console.WriteLine(@"usage: /ApplyScripts <DbKey> <""con string""> <""provider""> [""DbDir=<script directory>""]");
